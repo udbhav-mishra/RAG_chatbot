@@ -1,0 +1,17 @@
+# Virtual environment
+venv/
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# FAISS index / embeddings
+faiss_index/
+*.faiss
+*.pkl
+
+# VS Code settings
+.vscode/
