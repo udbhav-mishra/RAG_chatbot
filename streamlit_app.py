@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 #FastAPI backend URL:
-API_URL = "http://127.0.0.1:8000/query"
+API_URL = "https://mini-rag-project-mmiz.onrender.com/query"
 
 # Page configuration:
 st.set_page_config(page_title="RAG App",
