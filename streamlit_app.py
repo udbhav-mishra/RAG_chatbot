@@ -61,26 +61,29 @@ if user_input:
         #Send query to FastAPI backend:
 
             try:
+                st.write("API URL:", API_URL)
+                st.write("API Key entered:", user_api_key)
+
                 response = requests.post(
-                    API_URL,
-                    headers={"Authorization": f"Bearer {user_api_key}"},
-                    json={"query": user_input}
-                )
+                API_URL,
+                headers={"Authorization": f"Bearer {user_api_key}"},
+                json={"query": user_input}
+            )
+
+                st.write("Status Code:", response.status_code)
+                st.write("Raw Response:", response.text)
+
                 response_data = response.json()
                 
-                if response.status_code == 401:
-                    answer = "Authentication failed. Invalid API key."
-                elif response.status_code == 403:
-                    answer = "Access denied."
-                elif response.status_code != 200:
-                    answer = f"API Error ({response.status_code})"
-                else:
+                response_data = response.json()
+
+                if response.status_code == 200:
                     answer = response_data.get("answer", "No answer found.")
-                
-                if "error" in response_data:
-                    answer = response_data["error"]
                 else:
-                    answer = response_data.get("answer", "No answer found.")
+                    answer = response_data.get(
+                        "detail",
+                        f"API Error ({response.status_code})"
+                        )
             except Exception as e:
                 answer = f"Error connecting to API: {e}"
             
