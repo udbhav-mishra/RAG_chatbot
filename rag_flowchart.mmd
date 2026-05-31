@@ -1,0 +1,58 @@
+graph TB
+    subgraph "Data Preparation"
+        A["📁 Document Corpus<br/>(docs/)"]
+        B["📄 mahabharat.txt<br/>📄 ramayan.txt"]
+        A --> B
+    end
+    
+    subgraph "Build Phase"
+        C["⚙️ build.py"]
+        D["📑 Chunking<br/>size:500, overlap:100"]
+        E["🔑 OpenAI Embeddings"]
+        F["🗂️ FAISS Indexing"]
+        G["💾 Vector DB"]
+        
+        B --> C
+        C --> D
+        D --> E
+        E --> F
+        F --> G
+    end
+    
+    subgraph "Storage"
+        H["vector_db/faiss_index"]
+        I["vector_db/chunks.pkl"]
+        G --> H
+        G --> I
+    end
+    
+    subgraph "Query Interfaces"
+        J["🖥️ Streamlit App<br/>streamlit_app.py"]
+        K["💻 CLI<br/>chat_CLI.py"]
+        L["🔌 FastAPI<br/>chat_API.py"]
+    end
+    
+    subgraph "RAG Pipeline"
+        M["❓ User Query"]
+        N["🔑 Query Embedding<br/>OpenAI API"]
+        O["🔍 FAISS Search<br/>Find similar chunks"]
+        P["📚 Retrieved Context"]
+        Q["🤖 LLM Response<br/>OpenAI API"]
+        R["💬 Answer to User"]
+    end
+    
+    H --> M
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N
+    N --> O
+    O --> P
+    P --> Q
+    Q --> R
+    
+    style A fill:#e1f5ff
+    style G fill:#fff3e0
+    style M fill:#f3e5f5
+    style R fill:#c8e6c9

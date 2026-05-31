@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Project Flowchart</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+        .download-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .download-section p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .download-links {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>RAG Project Architecture Flowchart</h1>
+        
+        <div class="mermaid">
+graph TB
+    subgraph "Data Preparation"
+        A["📁 Document Corpus<br/>(docs/)"]
+        B["📄 mahabharat.txt<br/>📄 ramayan.txt"]
+        A --> B
+    end
+    
+    subgraph "Build Phase"
+        C["⚙️ build.py"]
+        D["📑 Chunking<br/>size:500, overlap:100"]
+        E["🔑 OpenAI Embeddings"]
+        F["🗂️ FAISS Indexing"]
+        G["💾 Vector DB"]
+        
+        B --> C
+        C --> D
+        D --> E
+        E --> F
+        F --> G
+    end
+    
+    subgraph "Storage"
+        H["vector_db/faiss_index"]
+        I["vector_db/chunks.pkl"]
+        G --> H
+        G --> I
+    end
+    
+    subgraph "Query Interfaces"
+        J["🖥️ Streamlit App<br/>streamlit_app.py"]
+        K["💻 CLI<br/>chat_CLI.py"]
+        L["🔌 FastAPI<br/>chat_API.py"]
+    end
+    
+    subgraph "RAG Pipeline"
+        M["❓ User Query"]
+        N["🔑 Query Embedding<br/>OpenAI API"]
+        O["🔍 FAISS Search<br/>Find similar chunks"]
+        P["📚 Retrieved Context"]
+        Q["🤖 LLM Response<br/>OpenAI API"]
+        R["💬 Answer to User"]
+    end
+    
+    H --> M
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N
+    N --> O
+    O --> P
+    P --> Q
+    Q --> R
+    
+    style A fill:#e1f5ff
+    style G fill:#fff3e0
+    style M fill:#f3e5f5
+    style R fill:#c8e6c9
+        </div>
+
+        <div class="download-section">
+            <p><strong>To download this flowchart as an image:</strong></p>
+            <div class="download-links">
+                <a href="https://mermaid.live" target="_blank">Open in Mermaid Live Editor</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 14px; color: #999;">
+                1. Open the Mermaid Live Editor link above<br>
+                2. Paste the diagram code from <code>rag_flowchart.mmd</code><br>
+                3. Click the download button to save as PNG or SVG
+            </p>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default' });
+    </script>
+</body>
+</html>
