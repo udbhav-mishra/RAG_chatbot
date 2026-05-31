@@ -23,7 +23,7 @@ st.write("Ask questions the RAG chatbot will answer based on the documents it ha
 
 user_api_key = st.sidebar.text_input("Enter API Key", type="password")
 if not user_api_key:
-    st.warning("Please enter an API key to continuse.")
+    st.warning("Please enter an API key to continue.")
     st.stop()
 
 # Session state for chat history:
