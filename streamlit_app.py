@@ -1,6 +1,10 @@
 import streamlit as st
 import requests
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
+RAG_API_KEY = os.getenv("VALID_API_KEY")  # Default API key if not set
 #FastAPI backend URL:
 API_URL = "https://mini-rag-project-mmiz.onrender.com/query"
 
@@ -51,10 +55,19 @@ if user_input:
             try:
                 response = requests.post(
                     API_URL,
+                    headers={"Authorization": f"Bearer {RAG_API_KEY}"},
                     json={"query": user_input}
                 )
                 
-                response_data = response.json()
+                if response.status_code == 401:
+                    answer = "Authentication failed. Invalid API key."
+                elif response.status_code == 403:
+                    answer = "Access denied."
+                elif response.status_code != 200:
+                    answer = f"API Error ({response.status_code})"
+                else:
+                    response_data = response.json()
+                    answer = response_data.get("answer", "No answer found.")
                 
                 if "error" in response_data:
                     answer = response_data["error"]

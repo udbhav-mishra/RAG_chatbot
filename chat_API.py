@@ -4,14 +4,27 @@ import pickle
 import numpy as np
 from openai import OpenAI
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel
 
 ## Load api key and initialize OpenAI client:
 
 load_dotenv()
+
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key = api_key)
+
+## Security scheme for API key authentication (if needed):
+
+VALID_API_KEYS = set(os.getenv("VALID_API_KEY", "").split(","))  # Set of valid API keys
+security = HTTPBearer()
+
+def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    api_key = credentials.credentials
+    if api_key not in VALID_API_KEYS:
+        raise HTTPException(status_code=403, detail="Invalid API key")
+    return api_key    
 
 ## Load the FAISS index and chunks:
 
@@ -30,7 +43,8 @@ def home():
     return {"message": "Welcome to the RAG API. Use the /query endpoint to ask questions."}
 
 @app.post("/query")
-def answer_query(query: Query):
+
+def answer_query(query: Query, api_key: str = Depends(verify_api_key)):
     query = query.query
 
     try:
