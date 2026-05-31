@@ -61,19 +61,11 @@ if user_input:
         #Send query to FastAPI backend:
 
             try:
-                st.write("API URL:", API_URL)
-                st.write("API Key entered:", user_api_key)
-
                 response = requests.post(
                 API_URL,
                 headers={"Authorization": f"Bearer {user_api_key}"},
                 json={"query": user_input}
             )
-
-                st.write("Status Code:", response.status_code)
-                st.write("Raw Response:", response.text)
-
-                response_data = response.json()
                 
                 response_data = response.json()
 
