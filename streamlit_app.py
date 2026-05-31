@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 RAG_API_KEY = os.getenv("VALID_API_KEY")  # Default API key if not set
+
 #FastAPI backend URL:
 API_URL = "https://mini-rag-project-mmiz.onrender.com/query"
 
@@ -17,6 +18,13 @@ st.set_page_config(page_title="RAG App",
 # Title and description:
 st.title("RAG Chatbot")
 st.write("Ask questions the RAG chatbot will answer based on the documents it has been trained on.")
+
+# API key input (optional):
+
+user_api_key = st.sidebar.text_input("Enter API Key (optional)", type="password")
+if not user_api_key:
+    st.warning("Please enter an API key to continuse.")
+    st.stop()
 
 # Session state for chat history:
 
@@ -55,7 +63,7 @@ if user_input:
             try:
                 response = requests.post(
                     API_URL,
-                    headers={"Authorization": f"Bearer {RAG_API_KEY}"},
+                    headers={"Authorization": f"Bearer {user_api_key}"},
                     json={"query": user_input}
                 )
                 
