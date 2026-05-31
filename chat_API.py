@@ -23,7 +23,6 @@ client = OpenAI(api_key = api_key)
 
 VALID_API_KEY = set(os.getenv("VALID_API_KEY", "").split(","))  # Set of valid API keys
 security = HTTPBearer()
-print(f"Valid API keys: {VALID_API_KEY}")  # Debugging statement
 
 def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
     api_key = credentials.credentials
@@ -82,7 +81,14 @@ def answer_query(query: Query, api_key: str = Depends(verify_api_key)):
         chat_response = client.chat.completions.create(
             model = chat_model,
             messages = [
-                {"role": "system", "content": "Answer using provided context only. If you don't know the answer, say you don't know."},
+                {"role": "system", "content": """You are a helpful assistant.
+                    If the user is greeting you or making casual conversation,
+                    respond naturally.
+                    If the user asks a question that requires information,
+                    use the provided context.
+                    If the answer is not in the context, politely say that the
+                    information is not available in the documents."""
+                    },
                 {"role": "user", "content": f"""Context: {context}\n\nQuestion: {query}"""}
             ]
         )
