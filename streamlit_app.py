@@ -8,7 +8,7 @@ RAG_API_KEY = os.getenv("VALID_API_KEY")
 
 #FastAPI backend URL:
 API_URL = "https://mini-rag-project-mmiz.onrender.com/query"
-
+# API_URL = "http://localhost:8000/query"
 # Page configuration:
 st.set_page_config(page_title="RAG App",
    page_icon=":robot_face:",
@@ -23,8 +23,7 @@ st.write("Ask questions the RAG chatbot will answer based on the documents it ha
 
 user_api_key = st.sidebar.text_input("Enter API Key", type="password")
 if not user_api_key:
-    st.warning("Please enter an API key to continue.")
-    st.stop()
+    st.sidebar.info("No API key entered. You can still use the default free access for up to 5 queries per day.")
 
 # Session state for chat history:
 
@@ -61,21 +60,20 @@ if user_input:
         #Send query to FastAPI backend:
 
             try:
+                headers = {"Authorization": f"Bearer {user_api_key}"} if user_api_key else {}
                 response = requests.post(
-                API_URL,
-                headers={"Authorization": f"Bearer {user_api_key}"},
-                json={"query": user_input}
-            )
-                
+                    API_URL,
+                    headers=headers,
+                    json={"query": user_input}
+                )
                 response_data = response.json()
-
                 if response.status_code == 200:
                     answer = response_data.get("answer", "No answer found.")
                 else:
                     answer = response_data.get(
                         "detail",
                         f"API Error ({response.status_code})"
-                        )
+                    )
             except Exception as e:
                 answer = f"Error connecting to API: {e}"
             

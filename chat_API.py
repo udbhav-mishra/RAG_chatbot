@@ -1,4 +1,5 @@
 import os
+import datetime
 import faiss
 import pickle
 import numpy as np
@@ -21,16 +22,39 @@ client = OpenAI(api_key = api_key)
 ## Security scheme for API key authentication (if needed):
 
 
-VALID_API_KEY = set(os.getenv("VALID_API_KEY", "").split(","))  # Set of valid API keys
-security = HTTPBearer()
+VALID_API_KEY = set(filter(None, os.getenv("VALID_API_KEY", "").split(",")))  # Set of valid API keys
+DEFAULT_API_KEY = os.getenv("DEFAULT_API_KEY", "DEFAULT_FREE_KEY")
+security = HTTPBearer(auto_error=False)
+
+free_key_usage = {"date": datetime.date.today().isoformat(), "count": 0}
 
 def verify_api_key(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    api_key = credentials.credentials
-    print("Received:", credentials.credentials)
+    if not credentials:
+        api_key = DEFAULT_API_KEY
+    else:
+        api_key = credentials.credentials
+
+    print("Received:", api_key)
     print("Allowed:", VALID_API_KEY)
+
+    if api_key == DEFAULT_API_KEY:
+        today = datetime.date.today().isoformat()
+        if free_key_usage["date"] != today:
+            free_key_usage["date"] = today
+            free_key_usage["count"] = 0
+
+        if free_key_usage["count"] >= 5:
+            raise HTTPException(
+                status_code=403,
+                detail="Daily free query limit reached. Please provide a valid API key or try again tomorrow."
+            )
+
+        free_key_usage["count"] += 1
+        return api_key
+
     if api_key not in VALID_API_KEY:
-        raise HTTPException(status_code=403, detail="Invalid API key")
-    return api_key   
+        raise HTTPException(status_code=403, detail = "Invalid API key")
+    return api_key
 
 
 ## Load the FAISS index and chunks:
