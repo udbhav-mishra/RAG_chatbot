@@ -18,6 +18,9 @@ st.set_page_config(page_title="RAG App",
 # Title and description:
 st.title("RAG Chatbot")
 st.write("Ask questions the RAG chatbot will answer based on the documents it has been trained on.")
+st.write("Database trained on the following documents:")
+for files in os.listdir("docs"):
+    st.write(f"- {files}")
 
 # API key input (optional):
 
